@@ -1,0 +1,218 @@
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+<link rel="stylesheet" type="text/css" href="https://js.cit.api.here.com/v3/3.0/mapsjs-ui.css" />
+<script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-core.js"></script>
+<script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-service.js"></script>
+<script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-ui.js"></script>
+<script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-mapevents.js"></script>
+<script src="./flyLib.js"></script>
+    <style>
+      html, body {
+        font-family: Verdana, Geneva, sans-serif; 
+        height: 100%; 
+        width: 100%;
+		margin: 0; 
+        padding: 0;
+      }
+	  #instructions {
+		float: right;
+		border-style: dotted;
+		text-align: center;
+	  }
+	  #inputdiv {
+	  float: left;
+	  }
+	  #buttons {
+	  }
+
+    </style>
+</head>
+<body>
+	<div id="map" style="width: 100%; height: 50%; background: grey"></div>
+<script type="text/javascript">
+var xValues = [];
+var yValues = [];
+var polygonStorage = [];
+const newArea = new FlightArea();
+const cameraProp = new Camera();
+
+function setUpClickListener(map) {
+  map.addEventListener('tap', function (evt) {
+    var coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+	polygonStorage.push(coord.lat,coord.lng,0);
+	xValues.push(coord.lng);
+	yValues.push(coord.lat);
+	if (xValues.length == 4) {
+		console.log(xValues);
+		console.log(yValues);
+		addPolygonToMap(map);
+		newArea.xValues = xValues;
+		newArea.yValues = yValues;
+	}
+  });
+	disableButton("plygn");
+} 
+
+//Adds a polygon to the map
+function addPolygonToMap(map) {
+	var lineString = new H.geo.LineString(
+    polygonStorage,
+    'values lat lng alt'
+  );
+  map.addObject(
+    new H.map.Polygon(lineString, {
+      style: {
+        fillColor: 'rgba(15, 15, 15, 0.4',
+        strokeColor: '#2E64FE',
+        lineWidth: 3
+      }
+    })
+  );
+}
+		
+function disableButton(btnId){
+	document.getElementById(btnId).disabled = true;
+}
+
+var platform = new H.service.Platform({
+	app_id: '4kG0gfFzMHs1eD2NFujL',
+	app_code: '63A6PPNYVFN-OXiUzO0uuw',
+	useCIT: true,
+	useHTTPS: true
+});
+
+var defaultLayers = platform.createDefaultLayers();
+
+//initialization of the map centered in Frankfurt
+var map = new H.Map(document.getElementById('map'),
+	defaultLayers.satellite.map,{
+	center: {lat:50, lng:8.6},
+	zoom: 8
+});
+
+// For further developement
+// var circle = new H.map.Circle({lat: 52.51, lng: 13.4},10);
+// map.addObject(circle);
+
+var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+function setCameraProperties(cameraProp) {
+	cameraProp.focal = document.getElementById('focal').value/10; //mm to cm
+	cameraProp.pNumberX = document.getElementById('pixelnumber_x').value;
+	cameraProp.pNumberY = document.getElementById('pixelnumber_y').value;
+	cameraProp.sensorX = document.getElementById('sensor_x').value/10; //mm to cm
+	cameraProp.sensorY = document.getElementById('sensor_y').value/10;	//mm to cm
+}
+
+function calcGSD() {
+	setCameraProperties(cameraProp);
+	var height = document.getElementById("hg").value*100; //m to cm
+	return console.log(calcGSDFromHeight(cameraProp,height));
+}
+
+function calcHeightFromGSD() {
+	setCameraProperties();
+}
+
+ </script>
+ <div id="inputdiv">
+	<form id="inputform">
+		<table>
+			<tr>
+				<td>Focal Length [mm]:</td>
+				<td><input type="number" id= 'focal' name="focal" value=8.8></td>
+			</tr>
+			<tr>
+				<td>Height [m]</td>
+				<td><input type="number" id='hg' name="hg" value=80.0></td>
+			</tr>
+			<tr>
+				<td>Desired Spatial Resolution [m]:</td>
+				<td><input type="number" id='GSD' name="GSD" value=0.02></td>
+			</tr>
+			<tr>
+				<td>Pixelnumber Width:</td>
+				<td><input type="number" id='pixelnumber_x' name="pixelnumber_x" value=5472></td>
+			</tr>
+			<tr>
+				<td>Pixelnumber Height:</td>
+				<td><input type="number" id='pixelnumber_y' name="pixelnumber_y" value=3078></td>
+			</tr>
+			<tr>
+				<td>Sensor Width [mm]:</td>
+				<td><input type="number" id='sensor_x' name="sensor_x" value=13.2></td>
+			</tr>
+			<tr>
+				<td>Sensor Height [mm]:</td>
+				<td><input type="number" id='sensor_y' name="sensor_y" value=8></td>
+			</tr>
+			<tr>
+				<td>Vertical Overlapping from 0 to 0.99:</td>
+				<td><input type="number" id='overlap_v' name="overlap_v" value=0.3></td>
+			</tr>
+			<tr>
+				<td>Horizontal Overlapping from 0 to 0.99:</td>
+				<td><input type="number" id='overlap_h' name="overlap_h" value=0.2></td>
+			</tr>
+			<tr>
+				<td>Recording rate [sec] per picture:</td>
+				<td><input type="number" id='recRate' name="recRate" value=5></td>
+			</tr>
+		</table>
+	</form>
+</div>
+<div id="buttons">
+<table>
+<tr>
+	<td>
+		<button id="plygn" onclick="setUpClickListener(map)">Draw polygon</button>
+	</td>
+</tr>
+<tr>
+	<td>	
+		<button id="calcGSD" onclick="calcGSD()">Calculate GSD from fixed height</button>
+	</td>
+</tr>
+<tr>
+	<td>
+		<button id="maxheight" onclick="calcHeightFromGSD()">Calculate height from fixed GSD</button>
+	</td>
+	<td>
+		<output type="number" id="maxHeightOutput"></output>
+	</td>
+</tr>
+</table>
+</div>
+<div id="output">
+<tr>
+	<td>
+		<output type="number" id="number_h"></output>
+	</td>
+</tr>
+<tr>
+	<td>
+		<output type="number" id="number_v"></output>
+	</td>
+</tr>
+<tr>
+	<td>
+		<output type="number" id="velo_h"></output>
+	</td>
+	<td>
+		<output type="number" id="velo_v"></output>
+	</td>
+</tr>
+</table>
+</div>
+<div id="instructions">
+<span>Instructions:<br></span>
+<span>Change the parameters. If you want to calculate the height from a desired resolution, you have to enter the resolution and press "Calculate maximum height".
+	  If you want to calculate coordinates of points, you need to fill in a height.
+	  By clicking the button "Draw polygon" you can click into the map to draw a rectangle with 4 corners. After drawing the polygon and entering the parameters you can use the calculation buttons.
+      The map uses unprojected geographic coordinates.
+</span>
+</div>
+</body>
+</html>
