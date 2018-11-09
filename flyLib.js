@@ -134,6 +134,7 @@ function calcGSDFromHeight(camera,height) {
 	return Math.max(gsdY,gsdX).toFixed(2);
 }
 
-function calcHeightFromGSD() {
-	
+function calcHeightFromGSD(camera,gsd) {
+	var height = (gsd*camera.focal*pNumberX)/camera.sensorX;
+	return height
 }

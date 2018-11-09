@@ -8,3 +8,4 @@ Features:
 - Get maximum velocity of drone for sufficient coverage
 
 Take care of units!
+Default camera values for DJI Phantom 4.
