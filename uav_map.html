@@ -99,7 +99,7 @@ var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 var ui = H.ui.UI.createDefault(map, defaultLayers);
 
 function setCameraProperties(cameraProp) {
-	cameraProp.focal = document.getElementById('focal').value/10; //mm to cm
+	cameraProp.focal = (document.getElementById('focal').value)/10; //mm to cm
 	cameraProp.pNumberX = document.getElementById('pixelnumber_x').value;
 	cameraProp.pNumberY = document.getElementById('pixelnumber_y').value;
 	cameraProp.sensorX = document.getElementById('sensor_x').value/10; //mm to cm
@@ -109,11 +109,12 @@ function setCameraProperties(cameraProp) {
 function calcGSD() {
 	setCameraProperties(cameraProp);
 	var height = document.getElementById("hg").value*100; //m to cm
-	return console.log(calcGSDFromHeight(cameraProp,height));
+	return calcGSDFromHeight(cameraProp,height);
 }
 
-function calcHeightFromGSD() {
-	setCameraProperties();
+function calcHeight() {
+	setCameraProperties(cameraProp);
+	return calcHeightFromGSD(cameraProp,document.getElementById('GSD').value);
 }
 
  </script>
@@ -122,7 +123,7 @@ function calcHeightFromGSD() {
 		<table>
 			<tr>
 				<td>Focal Length [mm]:</td>
-				<td><input type="number" id= 'focal' name="focal" value=8.8></td>
+				<td><input type="number" id='focal' name="focal" value=8.8></td>
 			</tr>
 			<tr>
 				<td>Height [m]</td>
@@ -177,7 +178,7 @@ function calcHeightFromGSD() {
 </tr>
 <tr>
 	<td>
-		<button id="maxheight" onclick="calcHeightFromGSD()">Calculate height from fixed GSD</button>
+		<button id="maxheight" onclick="calcHeight()">Calculate height from fixed GSD</button>
 	</td>
 	<td>
 		<output type="number" id="maxHeightOutput"></output>
