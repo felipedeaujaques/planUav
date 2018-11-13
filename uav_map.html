@@ -34,8 +34,8 @@
 var xValues = [];
 var yValues = [];
 var polygonStorage = [];
-const newArea = new FlightArea();
-const cameraProp = new Camera();
+var newArea = new FlightArea();
+var cameraProp = new Camera();
 
 function setUpClickListener(map) {
   map.addEventListener('tap', function (evt) {
@@ -99,11 +99,12 @@ var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 var ui = H.ui.UI.createDefault(map, defaultLayers);
 
 function setCameraProperties(cameraProp) {
-	cameraProp.focal = (document.getElementById('focal').value)/10; //mm to cm
+	cameraProp.focal = document.getElementById('focal').value/10; //mm to cm
 	cameraProp.pNumberX = document.getElementById('pixelnumber_x').value;
 	cameraProp.pNumberY = document.getElementById('pixelnumber_y').value;
 	cameraProp.sensorX = document.getElementById('sensor_x').value/10; //mm to cm
 	cameraProp.sensorY = document.getElementById('sensor_y').value/10;	//mm to cm
+	cameraProp.recordingRate = (document.getElementById('recRate').value/10)*10;
 }
 
 function calcGSD() {
@@ -112,9 +113,24 @@ function calcGSD() {
 	return calcGSDFromHeight(cameraProp,height);
 }
 
-function calcHeight() {
+function calcHeight(newArea) {
 	setCameraProperties(cameraProp);
-	return calcHeightFromGSD(cameraProp,document.getElementById('GSD').value);
+	var h = calcHeightFromGSD(cameraProp,document.getElementById('GSD').value);
+	//length of image sides
+	var imageX = calcMaxDistFromFixedHeight(cameraProp.sensorX,document.getElementById('hg').value*100,cameraProp.focal); //m to cm
+	var imageY = calcSmallerSide(imageX, cameraProp.pNumberX, cameraProp.pNumberY);
+	//number of images
+	var overlap_v = document.getElementById("overlap_v").value;
+	var overlap_h = document.getElementById("overlap_h").value;
+	var numberX = calcNumberOfHorizontalImages(newArea.maxLength(),imageX,overlap_v);
+	var numberY = calcNumberOfVerticalImages(newArea.minLength(),imageY,overlap_h);
+	document.getElementById("number_h").value = numberX;
+	document.getElementById("number_v").value = numberY;
+	//speed
+	var speed_v = calcVelocity(cameraProp.recordingRate,overlap_v,imageY);
+	var speed_h = calcVelocity(cameraProp.recordingRate,overlap_h,imageX);
+	document.getElementById("velo_h").value = speed_h;
+	document.getElementById("velo_v").value = speed_v;
 }
 
  </script>
@@ -147,19 +163,19 @@ function calcHeight() {
 			</tr>
 			<tr>
 				<td>Sensor Height [mm]:</td>
-				<td><input type="number" id='sensor_y' name="sensor_y" value=8></td>
+				<td><input type="number" id='sensor_y' name="sensor_y" value=8.0></td>
 			</tr>
 			<tr>
 				<td>Vertical Overlapping from 0 to 0.99:</td>
-				<td><input type="number" id='overlap_v' name="overlap_v" value=0.3></td>
+				<td><input type="number" id='overlap_v' name="overlap_v" value=0.6></td>
 			</tr>
 			<tr>
 				<td>Horizontal Overlapping from 0 to 0.99:</td>
-				<td><input type="number" id='overlap_h' name="overlap_h" value=0.2></td>
+				<td><input type="number" id='overlap_h' name="overlap_h" value=0.6></td>
 			</tr>
 			<tr>
 				<td>Recording rate [sec] per picture:</td>
-				<td><input type="number" id='recRate' name="recRate" value=5></td>
+				<td><input type="number" id='recRate' name="recRate" value=5.0></td>
 			</tr>
 		</table>
 	</form>
@@ -178,7 +194,7 @@ function calcHeight() {
 </tr>
 <tr>
 	<td>
-		<button id="maxheight" onclick="calcHeight()">Calculate height from fixed GSD</button>
+		<button id="maxheight" onclick="calcHeight(newArea)">Calculate height from fixed GSD</button>
 	</td>
 	<td>
 		<output type="number" id="maxHeightOutput"></output>
