@@ -98,19 +98,19 @@ var map = new H.Map(document.getElementById('map'),
 var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 var ui = H.ui.UI.createDefault(map, defaultLayers);
 
-function setCameraProperties(cameraProp) {
-	cameraProp.focal = document.getElementById('focal').value/10; //mm to cm
-	cameraProp.pNumberX = document.getElementById('pixelnumber_x').value;
-	cameraProp.pNumberY = document.getElementById('pixelnumber_y').value;
-	cameraProp.sensorX = document.getElementById('sensor_x').value/10; //mm to cm
-	cameraProp.sensorY = document.getElementById('sensor_y').value/10;	//mm to cm
-	cameraProp.recordingRate = (document.getElementById('recRate').value/10)*10;
+function setCameraProperties(camera) {
+	camera.focal = document.getElementById('focal').value/10; //mm to cm
+	camera.pNumberX = document.getElementById('pixelnumber_x').value;
+	camera.pNumberY = document.getElementById('pixelnumber_y').value;
+	camera.sensorX = document.getElementById('sensor_x').value/10; //mm to cm
+	camera.sensorY = document.getElementById('sensor_y').value/10;	//mm to cm
+	camera.recordingRate = (document.getElementById('recRate').value/10)*10;
 }
 
 function calcGSD() {
 	setCameraProperties(cameraProp);
-	var height = document.getElementById("hg").value*100; //m to cm
-	return calcGSDFromHeight(cameraProp,height);
+	console.log((document.getElementById("hg").value*100));
+	return calcGSDFromHeight(cameraProp,(document.getElementById("hg").value*100)); //m to cm
 }
 
 function calcHeight(newArea) {
@@ -124,13 +124,13 @@ function calcHeight(newArea) {
 	var overlap_h = document.getElementById("overlap_h").value;
 	var numberX = calcNumberOfHorizontalImages(newArea.maxLength(),imageX,overlap_v);
 	var numberY = calcNumberOfVerticalImages(newArea.minLength(),imageY,overlap_h);
-	document.getElementById("number_h").value = numberX;
-	document.getElementById("number_v").value = numberY;
+	document.getElementById("number_h").value = "Number of horizontal pictures: "+numberX;
+	document.getElementById("number_v").value = "Number of vertical pictures: "+numberY;
 	//speed
 	var speed_v = calcVelocity(cameraProp.recordingRate,overlap_v,imageY);
 	var speed_h = calcVelocity(cameraProp.recordingRate,overlap_h,imageX);
-	document.getElementById("velo_h").value = speed_h;
-	document.getElementById("velo_v").value = speed_v;
+	document.getElementById("velo_h").value = "Horizontal speed: "+speed_h;
+	document.getElementById("velo_v").value = "Vertical speed: "+speed_v;
 }
 
  </script>

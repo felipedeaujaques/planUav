@@ -68,13 +68,13 @@ function FlightArea(xValues,yValues) {
 					};
 };	
 
-function Camera() {
-		this.focal;
-		this.pNumberX;
-		this.pNumberY;
-		this.sensorX;
-		this.sensorY;
-		this.recordingRate;
+function Camera(focal, pNumberX, pNumberY, sensorX, sensorY, recRate) {
+		this.focal = focal;
+		this.pNumberX = pNumberX;
+		this.pNumberY = pNumberY;
+		this.sensorX = sensorX;
+		this.sensorY = sensorY;
+		this.recordingRate = recRate;
 }
 
 /*
@@ -149,12 +149,16 @@ function calcVelocity(recRate,overlap,side) {
 }
 
 function calcGSDFromHeight(camera,height) {
-	var disX = (camera.sensorX*height)/camera.focal;
-	var disY = (disX*camera.pNumberY)/camera.pNumberX;
-	var gsdY = (height*camera.sensorY)/(camera.focal*disY);
-	var gsdX = (height*camera.sensorX)/(camera.focal*disX);
+	console.log("Height: "+height);
+	console.log("Focal: "+camera.focal);
+	console.log("SensorX	: "+camera.sensorX);
+//	var disX = (camera.sensorX*height)/camera.focal;
+//	var disY = (disX*camera.pNumberY)/camera.pNumberX;
+	var gsdY = (height*camera.sensorY)/(camera.focal*camera.pNumberY);
+	var gsdX = (height*camera.sensorX)/(camera.focal*camera.pNumberX);
 	console.log(gsdY+" cm "+gsdX+" cm");
-	return Math.max(gsdY,gsdX).toFixed(2);
+	var maxVal = Math.max(gsdY,gsdX);
+	return maxVal;
 }
 
 function calcHeightFromGSD(camera,gsd) {
