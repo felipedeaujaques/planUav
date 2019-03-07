@@ -167,3 +167,13 @@ function calcHeightFromGSD(camera,gsd) {
 	var heightFromY = (gsd*camera.focal*camera.pNumberY)/camera.sensorY;
 	return Math.min(heightFromX,heightFromY);
 }
+
+//some drones
+var TrimbleUX5 = {
+		"focalMax" : 55,
+		"focalMin" : 18, //if min & max take min?max?avg?users choice?
+		"pNumberX" : 4912,
+		"pNumberY" : 3264,
+		"sensorX" : 23.5,
+		"sensorY" : 15.6
+}
