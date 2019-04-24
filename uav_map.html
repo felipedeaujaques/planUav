@@ -56,8 +56,10 @@ function setUpClickListener(map) {
 		addPolygonToMap(map);
 		newArea.xValues = xValues;
 		newArea.yValues = yValues;
+	} else if (xValues.length > 4) {
+		window.alert("Polygon has more than 4 corners. Please reload the page and don't close your polygon with a double click!")
 	}
-  });
+	});
 	disableButton("plygn");
 } 
 
