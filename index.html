@@ -23,8 +23,6 @@
 	  #inputdiv {
 	  	float: left;
 	  }
-	  #buttons {
-	  }
 	  table {
 	  	font-size: 10pt;
 	  }
@@ -151,13 +149,18 @@ function calcPictures(height) {
 	document.getElementById("velo_h").value = "Horizontal speed: "+speed_h*3.6+" km/h.";
 	document.getElementById("velo_v").value = "Vertical speed: "+speed_v*3.6+" km/h.";
 }
+
+window.onload = function() {
+	console.log(DJIphantom4.focal);
+	document.getElementById('focal').value = DJIphantom4.focal;
+};
  </script>
  <div id="inputdiv">
 	<form id="inputform">
 		<table>
 			<tr>
 				<td>Focal Length [mm]:</td>
-				<td><input type="number" id='focal' name="focal" value=8.8></td>
+				<td><input type="number" id='focal' name="focal" value=8.8 step=any min=0></td>
 			</tr>
 			<tr>
 				<td>Height [m]</td>

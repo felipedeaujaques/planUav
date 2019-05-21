@@ -167,10 +167,18 @@ function calcHeightFromGSD(camera,gsd) {
 
 //some drones
 var TrimbleUX5 = {
-		"focalMax" : 55,
-		"focalMin" : 18, //if min & max take min?max?avg?users choice?
-		"pNumberX" : 4912,
-		"pNumberY" : 3264,
-		"sensorX" : 23.5,
-		"sensorY" : 15.6
+	focal : 55,
+	pNumberX : 4912,
+	pNumberY : 3264,
+	sensorX : 23.5,
+	sensorY : 15.6
 }
+
+var DJIphantom4 = {
+	focal : 36.1250, //mm
+	pNumberX : 4000,
+	pNumberY : 3000,
+	sensorX : 13.2,
+	sensorY : 8.0
+}
+
